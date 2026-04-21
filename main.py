@@ -595,6 +595,7 @@ def main():
             raise SystemExit(1)
 
         emit_info(f"No MERAKI_ORG_ID provided. {message} available to this API key:")
+        emit_info("No organisation ID provided and unable to determine a default. Please specify an organization ID with --org-id or set MERAKI_ORG_ID.")
         for organization in organizations or []:
             name = organization.get("name", "<unknown>")
             organization_id = organization.get("id", "<missing id>")

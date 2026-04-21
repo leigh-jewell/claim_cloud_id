@@ -1,11 +1,157 @@
-# claim-cloud-id
+# 🚀 Meraki Dashboard Inventory Manager 🚀
 
-## Environment variables
+> A Python utility for interacting with the [Meraki Dashboard](https://dashboard.meraki.com) API to automate device inventory tasks — bulk add, release and reporting. 
 
-This project loads variables from a local `.env` file (using `python-dotenv`).
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/leigh-jewell/claim_cloud_id/releases)
+[![Issues](https://img.shields.io/github/issues/leigh-jewell/claim_cloud_id/issues)](https://github.com/leigh-jewell/claim_cloud_id/issues)
 
-1. Copy `.env.example` to `.env`.
-2. Set your real API key in `.env`:
+---
+
+## 📖 Table of Contents
+
+- [About](#-about)
+- [Features](#-features)
+- [Demo](#-demo)
+- [Quick Start](#-quick-start)
+- [Getting Started](#-getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Usage](#-usage)
+- [Configuration](#-configuration)
+- [Roadmap](#-roadmap)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Acknowledgements](#-acknowledgements)
+
+---
+
+## 🧐 About
+
+> This tool is an open-source tool that reads a csv file of Meraki cloud ids and can either: **claim**, **release** or **check** those devices in your specified organisation in [Meraki Dashboard](https://dashboard.meraki.com). Built for [Meraki Dashboard](https://dashboard.meraki.com) Admins for when your claim-id doesn't work or you want to migrate devices from one organisation to another.
+
+---
+
+## ✨ Features
+
+- ⚡ **Fast** — it has a batch function to reduce API calls
+- 🔒 **Secure** — uses the Meraki API SDK for security
+- 🌍 **Cross-platform** — works on any platform that can run Python
+- 📦 **Minimal dependencies** - only needs Meraki and python-dotenv libraries
+- 🛠️ **Easy to configure** — single config file and options can be run from command line
+
+---
+
+## 🎮 Demo
+
+Claiming a list of devices into Meraki Dashboard from a CSV file using interactive option:
+```console
+$ python main.py      
+Logging to meraki_inventory_actions.log
+Choose action [claim/release/check]: claim
+Enter path to CSV file with cloud IDs: cloud_id.csv
+Info: CSV header missing. Treating all rows as data.
+Loaded 2 cloud IDs from cloud_id.csv for claim with requested batch size 50
+Info: the following cloud IDs are already in inventory and will be skipped:
+- AAAA-BBB-CCCC
+- DDDD-EEE-DDDD
+Info: no claimable cloud IDs were found outside inventory.
+```
+---
+## ⚡ Quick Start
+
+**1. Clone the repo and install:**
+```bash
+git clone https://github.com/username/repo.git
+cd repo
+pip install uv
+uv sync
+```
+
+**2. Create your `.env` file:**
+```bash
+cp .env.example .env
+```
+
+```text
+MERAKI_DASHBOARD_API_KEY=your_api_key_here
+MERAKI_ORG_ID=meraki_org_id
+```
+
+**3. Prepare your CSV file** with a `cloud_id` or `serial` column:
+
+```text
+cloud_id
+Q2XX-XXXX-XXXX
+Q2XX-XXXX-XXXY
+Q2XX-XXXX-XXXZ
+```
+
+**4. Run:**
+```bash
+# Check which devices exist in inventory
+uv run python main.py --action check --csv devices.csv
+
+# Claim devices into inventory
+uv run python main.py --action claim --csv devices.csv
+
+# Release devices from inventory
+uv run python main.py --action release --csv devices.csv
+```
+
+That's it. The script will log all activity and confirm inventory state after each operation.
+
+> For full options and configuration see [Getting Started](#-getting-started) and [Usage](#-usage) and .
+
+---
+## 🚀 Getting Started
+
+### Prerequisites
+
+- [Python](https://python.org/) >= 3.x
+- API key from [Meraki Dashboard](https://dashboard.meraki.com)
+
+### Installation
+
+**1. Clone the repo:**
+```bash
+git clone https://github.com/leigh-jewell/claim_cloud_id.git
+cd claim_cloud_id
+```
+
+**2. Install dependencies:**
+```console
+git clone https://github.com/username/repo.git
+cd repo
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install .                    # Users only
+```
+Or if using [UV](https://docs.astral.sh/uv/ "Python package and project manager"):
+```console
+pip install uv           # Install uv
+uv sync                  # Create venv + install everything
+```
+
+**3. Creating Meraki Dashboard API:**
+
+You can create an API key within [Meraki Dashboard](https://dashboard.meraki.com) by clicking the person icon 👤 in the top right of your dashboard and selecting **My Profile** from the drop down. Scroll down to the **API access** section and click on **Generate new API key**. Copy this key and add it to your environment variables file (see below).
+
+**4. Set up environment variables:**
+```bash
+cp .env.example .env
+# Edit .env with your values
+```
+Edit the following variables in your `.env` file:
+
+| Variable | Required | Description |
+|---|---|---|
+| `MERAKI_DASHBOARD_API_KEY` | ✅ | API key generated from the Meraki Dashboard (see [Creating an API Key](#creating-an-api-key)) |
+| `MERAKI_ORG_ID` | ❌ | Your Meraki Organisation ID. If left empty, a list of available organisations will be printed on first run |
+| `MERAKI_BATCH_SIZE` | ❌ | Number of devices per API batch upload. Larger values are faster but may cause API errors — start with `100` |
+| `MERAKI_LOG_FILE` | ❌ | Path to a log file for script output e.g. `logs/meraki.log` |
+
+Here is an example environment variable file:
 
 ```env
 MERAKI_DASHBOARD_API_KEY=your_real_key_here
@@ -14,52 +160,140 @@ MERAKI_BATCH_SIZE=50
 MERAKI_LOG_FILE=meraki_inventory_actions.log
 ```
 
-`.env` is ignored by Git, so secrets are not committed.
+**5. Run the script:**
 
-## Manage cloud IDs from CSV
+Run with command options:
+```bash
+uv run python main.py --action claim   --csv devices.csv
+```
+Run interactive:
+```bash
+uv run python main.py
+```
 
-The script reads cloud IDs (serials) from a CSV file and can claim them, release them, or check whether they exist in inventory.
+Run without [UV](https://docs.astral.sh/uv/):
+```bash
+source .venv/bin/activate
+python main.py
+```
 
-Preferred CSV header is `cloud_id` or `serial`. If neither exists, the first non-empty column value per row is used.
 
-The script uses the Meraki Python SDK methods `claimIntoOrganizationInventory`, `releaseFromOrganizationInventory`, and `getOrganizationInventoryDevices`.
+---
 
-For `release`, the script first checks whether any CSV cloud IDs are currently bound to a network (`networkId` present in inventory). If any are bound, it prints those cloud IDs and exits without attempting release.
+## 💡 Usage
 
-For `release`, the script also checks whether each CSV cloud ID exists in inventory before release. Any cloud IDs not found are printed as informational output and skipped, while existing cloud IDs continue through the release flow.
+The script reads device serial numbers from a CSV file and can claim, release, or check devices
+against your [Meraki Dashboard](https://dashboard.meraki.com) organisation inventory.
 
-For `claim`, the script checks whether each CSV cloud ID already exists in inventory before claim. Any already-existing cloud IDs are printed as informational output and skipped, while missing cloud IDs continue through the claim flow.
-
-After a claim or release request succeeds, the script automatically checks organization inventory using `getOrganizationInventoryDevices` to verify the serials are present after claim or absent after release.
-
-Run with command line options:
+Run with `--action` and `--csv` as the minimum required arguments:
 
 ```bash
-uv run python main.py --action claim --csv devices.csv --org-id 123456
-uv run python main.py --action release --csv devices.csv --org-id 123456
-uv run python main.py --action check --csv devices.csv --report-csv inventory_report.csv
-uv run python main.py --action claim --csv devices.csv --batch-size 200
+uv run python main.py --action claim   --csv devices.csv
+uv run python main.py --action release --csv devices.csv
+uv run python main.py --action check   --csv devices.csv
+```
+
+---
+
+### Actions
+
+| Action | Description |
+|---|---|
+| `claim` | Claims devices into organisation inventory, skipping any serials already present |
+| `release` | Releases devices from inventory. Exits early if any device is currently bound to a network |
+| `check` | Reports which CSV serials exist or are missing from inventory, with an optional CSV export |
+
+---
+
+### CLI Options
+
+| Option | Default | Description |
+|---|---|---|
+| `--action` | prompted | `claim`, `release`, or `check` |
+| `--csv` | prompted | Path to input CSV file |
+| `--org-id` | `MERAKI_ORG_ID` | Organisation ID. If omitted, lists available orgs and exits |
+| `--batch-size` | `MERAKI_BATCH_SIZE` or `50` | Devices per API request. Larger is faster but may cause errors |
+| `--log-file` | `MERAKI_LOG_FILE` | Path to log file e.g. `logs/run.log` |
+| `--report-csv` | `inventory_check_report.csv` | Output report path for `check` action |
+
+---
+
+### CSV Format
+
+The preferred column header is `cloud_id` or `serial`. If neither is found, the first
+non-empty value in each row is used.
+
+---
+
+### Behaviour & Safeguards
+
+**Claim**
+- Checks inventory before claiming — any serials already present are skipped and logged
+
+**Release**
+- Checks that no devices are currently bound to a network (`networkId` present) before
+  attempting release — if any are bound, they are printed and the script exits without
+  making changes
+- Serials not found in inventory are skipped and logged; remaining serials proceed
+
+**After claim or release**, the script automatically re-queries inventory via
+`getOrganizationInventoryDevices` to verify serials are present (claim) or absent (release)
+
+**Batch failures** — if a large batch size causes API errors, the script automatically backs
+off and retries at a safe maximum of `50` per batch
+
+---
+
+### Logging
+
+Every run produces a timestamped log covering API calls, inventory checks, skips,
+retries, backoff events, and errors. Set the path via `--log-file` or `MERAKI_LOG_FILE`.
+
+---
+
+### Examples
+
+```bash
+# Claim with explicit org ID and batch size
+uv run python main.py --action claim --csv devices.csv --org-id 123456 --batch-size 200
+
+# Release using org ID from .env
+uv run python main.py --action release --csv devices.csv
+
+# Check inventory and export a report
+uv run python main.py --action check --csv devices.csv --report-csv report.csv
+
+# Log output to a file
 uv run python main.py --action claim --csv devices.csv --log-file run_audit.log
 ```
+---
 
-Or rely on `.env` for org ID and only pass CSV:
+## 🤝 Contributing
 
-```bash
-uv run python main.py --action claim --csv devices.csv
-```
+Contributions are what make the open-source community great. Any contributions you make are **greatly appreciated**.
 
-If `--action` is omitted, the script will prompt for `claim`, `release`, or `check`.
+1. Fork the project
+2. Create your feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
 
-If `--batch-size` is omitted, the script checks `MERAKI_BATCH_SIZE`. If that is also missing, it prompts for batch size and defaults to `50`.
+---
 
-Each run writes a log file with timestamps for API calls, inventory checks, skips, retries/backoff, and errors. Use `--log-file` or `MERAKI_LOG_FILE` to choose the path.
+## 📄 License
 
-If a very large batch size causes API failures, the script automatically backs off and retries with a safe maximum batch size of `50`.
+This project is licensed under the [MIT License](LICENSE). You are free to use, modify, and distribute this script. It is provided as-is with no warranty — while reasonable safeguards are in place, always test in a non-production environment before running against live inventory.
 
-For `--action check`, the script prints a summary of how many CSV cloud IDs exist or are missing from inventory and writes a report CSV with columns `cloud_id`, `status` (`exists` or `missing`), and `networkId` (when present).
+---
 
-If `--report-csv` is omitted in check mode, it prompts for a report path and defaults to `inventory_check_report.csv`.
+## 🙏 Acknowledgements
 
-If `--csv` is omitted, the script will prompt for the CSV file path.
+- [Meraki SDK](https://developer.cisco.com/meraki/api-v1/python/) — all the Meraki Dashboard API calls
+- [python-dotenv](https://pypi.org/project/python-dotenv/) — handles all the environment variables
+- [shields.io](https://shields.io/) for the badges
 
-If no org ID is provided via `MERAKI_ORG_ID` or `--org-id`, the script will list the organizations available to the API key and then exit.
+---
+
+<p align="center">
+  Made with ❤️ by <a href="https://github.com/leigh-jewell">Leigh J</a>
+</p>
