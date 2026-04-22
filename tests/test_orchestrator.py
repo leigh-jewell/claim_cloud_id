@@ -126,6 +126,74 @@ class TestRunInventoryWorkflow(unittest.TestCase):
         self.assertFalse(success)
         self.assertEqual(message, "unsupported action: delete")
 
+    @patch(
+        "claim_cloud_id.orchestrator.run_inventory_action_in_batches",
+        return_value=(False, "Meraki API error 400: invalid serial", None, 50),
+    )
+    @patch(
+        "claim_cloud_id.orchestrator.get_inventory_serials_for_cloud_ids",
+        return_value=(True, "ok", {"A"}),
+    )
+    def test_claim_batch_action_failure(self, _mock_inventory, _mock_run_batches):
+        success, message = run_inventory_workflow(
+            self.dashboard,
+            self.org_id,
+            "claim",
+            self.cloud_ids,
+            self.batch_size,
+        )
+
+        self.assertFalse(success)
+        self.assertEqual(message, "Meraki API error 400: invalid serial")
+
+    @patch(
+        "claim_cloud_id.orchestrator.verify_inventory_update",
+        return_value=(True, "inventory verification passed after claim", []),
+    )
+    @patch(
+        "claim_cloud_id.orchestrator.run_inventory_action_in_batches",
+        return_value=(True, "claimed 1 serial(s)", [], 50),
+    )
+    @patch(
+        "claim_cloud_id.orchestrator.get_inventory_serials_for_cloud_ids",
+        return_value=(True, "ok", {"A"}),
+    )
+    def test_claim_serial_mismatch_after_batch_response(self, _mock_inventory, _mock_run_batches, _mock_verify):
+        success, message = run_inventory_workflow(
+            self.dashboard,
+            self.org_id,
+            "claim",
+            self.cloud_ids,
+            self.batch_size,
+        )
+
+        self.assertFalse(success)
+        self.assertEqual(message, "serial mismatch in API response")
+
+    @patch(
+        "claim_cloud_id.orchestrator.verify_inventory_update",
+        return_value=(False, "inventory verification failed after claim", ["B"]),
+    )
+    @patch(
+        "claim_cloud_id.orchestrator.run_inventory_action_in_batches",
+        return_value=(True, "claimed 1 serial(s)", ["B"], 50),
+    )
+    @patch(
+        "claim_cloud_id.orchestrator.get_inventory_serials_for_cloud_ids",
+        return_value=(True, "ok", {"A"}),
+    )
+    def test_claim_verification_failure(self, _mock_inventory, _mock_run_batches, _mock_verify):
+        success, message = run_inventory_workflow(
+            self.dashboard,
+            self.org_id,
+            "claim",
+            self.cloud_ids,
+            self.batch_size,
+        )
+
+        self.assertFalse(success)
+        self.assertEqual(message, "inventory verification failed after claim")
+
 
 if __name__ == "__main__":
     unittest.main()
