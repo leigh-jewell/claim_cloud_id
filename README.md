@@ -229,7 +229,7 @@ uv run python main.py --action claim --csv devices.csv --log-file run_audit.log
 If you are validating the first refactor phase (constants/config/CLI extraction), run:
 
 ```bash
-uv run python -m py_compile main.py claim_cloud_id/constants.py claim_cloud_id/config.py claim_cloud_id/cli.py claim_cloud_id/logger.py claim_cloud_id/csv_loader.py claim_cloud_id/report_writer.py claim_cloud_id/api_operations.py
+uv run python -m py_compile main.py claim_cloud_id/constants.py claim_cloud_id/config.py claim_cloud_id/cli.py claim_cloud_id/logger.py claim_cloud_id/csv_loader.py claim_cloud_id/report_writer.py claim_cloud_id/api_operations.py claim_cloud_id/orchestrator.py
 uv run python main.py --action check --csv cloud_id.csv
 ```
 
