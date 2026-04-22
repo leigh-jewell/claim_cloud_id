@@ -2,6 +2,8 @@
 
 > A Python utility for interacting with the [Meraki Dashboard](https://dashboard.meraki.com) API to automate device inventory tasks — bulk add, release and reporting. 
 
+📖 **New here? Start with the [Quick Start Guide](QUICKSTART.md)**
+
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/leigh-jewell/claim_cloud_id/releases)
 [![Issues](https://img.shields.io/github/issues/leigh-jewell/claim_cloud_id/issues)](https://github.com/leigh-jewell/claim_cloud_id/issues)
@@ -13,7 +15,6 @@
 - [About](#-about)
 - [Features](#-features)
 - [Demo](#-demo)
-- [Quick Start](#-quick-start)
 - [Getting Started](#-getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
@@ -57,51 +58,6 @@ Info: the following cloud IDs are already in inventory and will be skipped:
 - DDDD-EEE-DDDD
 Info: no claimable cloud IDs were found outside inventory.
 ```
----
-## ⚡ Quick Start
-
-**1. Clone the repo and install:**
-```bash
-git clone https://github.com/username/repo.git
-cd repo
-pip install uv
-uv sync
-```
-
-**2. Create your `.env` file:**
-```bash
-cp .env.example .env
-```
-
-```text
-MERAKI_DASHBOARD_API_KEY=your_api_key_here
-MERAKI_ORG_ID=meraki_org_id
-```
-
-**3. Prepare your CSV file** with a `cloud_id` or `serial` column:
-
-```text
-cloud_id
-Q2XX-XXXX-XXXX
-Q2XX-XXXX-XXXY
-Q2XX-XXXX-XXXZ
-```
-
-**4. Run:**
-```bash
-# Check which devices exist in inventory
-uv run python main.py --action check --csv devices.csv
-
-# Claim devices into inventory
-uv run python main.py --action claim --csv devices.csv
-
-# Release devices from inventory
-uv run python main.py --action release --csv devices.csv
-```
-
-That's it. The script will log all activity and confirm inventory state after each operation.
-
-> For full options and configuration see [Getting Started](#-getting-started) and [Usage](#-usage) and .
 
 ---
 ## 🚀 Getting Started
@@ -266,6 +222,19 @@ uv run python main.py --action check --csv devices.csv --report-csv report.csv
 # Log output to a file
 uv run python main.py --action claim --csv devices.csv --log-file run_audit.log
 ```
+---
+
+## 🧪 Refactor Validation (Phase 1)
+
+If you are validating the first refactor phase (constants/config/CLI extraction), run:
+
+```bash
+uv run python -m py_compile main.py claim_cloud_id/constants.py claim_cloud_id/config.py claim_cloud_id/cli.py
+uv run python main.py --action check --csv cloud_id.csv
+```
+
+These checks confirm the module extraction compiles and that the existing check workflow still runs.
+
 ---
 
 ## 🤝 Contributing
