@@ -103,6 +103,43 @@ class TestMainBootstrap(unittest.TestCase):
             "inventory_check_report.csv",
         )
 
+    def test_release_action_delegates_with_no_report_path(self):
+        args = SimpleNamespace(
+            action="release",
+            batch_size=50,
+            csv_path="cloud_id.csv",
+            report_csv="inventory_check_report.csv",
+            org_id="123",
+            log_file=None,
+        )
+        dashboard = object()
+
+        with (
+            patch("main.parse_args", return_value=args),
+            patch("main.get_log_file_path", return_value="meraki_inventory_actions.log"),
+            patch("main.setup_file_logger", return_value="meraki_inventory_actions.log"),
+            patch("main.get_dashboard_api_key", return_value="api-key"),
+            patch("main.get_dashboard_client", return_value=dashboard),
+            patch("main.get_org_id", return_value="123"),
+            patch("main.get_action", return_value="release"),
+            patch("main.get_batch_size", return_value=50),
+            patch("main.load_cloud_ids_from_csv", return_value=["A", "B"]),
+            patch("main.get_report_csv_path") as mock_get_report_path,
+            patch("main.run_inventory_workflow", return_value=(True, "inventory verification passed after release")) as mock_run,
+            patch("main.emit_info") as _mock_emit_info,
+        ):
+            app_main.main()
+
+        mock_get_report_path.assert_not_called()
+        mock_run.assert_called_once_with(
+            dashboard,
+            "123",
+            "release",
+            ["A", "B"],
+            50,
+            None,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
