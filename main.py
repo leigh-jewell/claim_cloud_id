@@ -1,6 +1,3 @@
-import csv
-from pathlib import Path
-
 from claim_cloud_id.cli import (
     get_action,
     get_batch_size,
@@ -15,6 +12,7 @@ from claim_cloud_id.config import (
     get_org_id,
 )
 from claim_cloud_id.constants import SAFE_MAX_BATCH_SIZE
+from claim_cloud_id.csv_loader import load_cloud_ids_from_csv
 from claim_cloud_id.logger import (
     emit_error,
     emit_info,
@@ -24,62 +22,12 @@ from claim_cloud_id.logger import (
     log_warning,
     setup_file_logger,
 )
+from claim_cloud_id.report_writer import write_inventory_check_report
 from dotenv import load_dotenv
 import meraki
 
 
 load_dotenv()
-
-def chunk_list(items: list[str], chunk_size: int) -> list[list[str]]:
-    return [items[index:index + chunk_size] for index in range(0, len(items), chunk_size)]
-
-
-def load_cloud_ids_from_csv(csv_path: str) -> list[str]:
-    path = Path(csv_path)
-    if not path.exists():
-        raise FileNotFoundError(f"CSV file not found: {path}")
-    if not path.is_file():
-        raise ValueError(f"Path is not a file: {path}")
-
-    cloud_ids: list[str] = []
-    with path.open("r", newline="", encoding="utf-8") as csv_file:
-        rows = list(csv.reader(csv_file))
-
-    if not rows:
-        raise ValueError("CSV file is empty")
-
-    first_row = rows[0]
-    normalized_first_row = [value.strip().lower() for value in first_row if value and value.strip()]
-    header_index = None
-
-    for candidate in ("cloud_id", "serial"):
-        if candidate in normalized_first_row:
-            header_index = normalized_first_row.index(candidate)
-            break
-
-    data_rows = rows
-    start_row_number = 1
-    if header_index is not None:
-        data_rows = rows[1:]
-        start_row_number = 2
-    else:
-        emit_info("Info: CSV header missing. Treating all rows as data.")
-
-    for row_index, row in enumerate(data_rows, start=start_row_number):
-        if header_index is not None and header_index < len(row):
-            raw_value = row[header_index].strip()
-        else:
-            raw_value = next((value.strip() for value in row if value and value.strip()), "")
-
-        if not raw_value:
-            emit_warning(f"Skipping row {row_index}: missing cloud_id/serial value")
-            continue
-
-        cloud_ids.append(raw_value)
-
-    if not cloud_ids:
-        raise ValueError("No valid cloud IDs found in CSV")
-    return list(dict.fromkeys(cloud_ids))
 
 
 def get_dashboard_client(api_key: str) -> meraki.DashboardAPI:
@@ -333,30 +281,6 @@ def get_inventory_serials_for_cloud_ids(
     found_serials.update(batch_serials)
 
     return True, message, found_serials
-
-
-def write_inventory_check_report(
-    report_csv_path: str,
-    cloud_ids: list[str],
-    inventory_serials: set[str],
-    network_ids_by_serial: dict[str, str],
-) -> tuple[bool, str]:
-    report_path = Path(report_csv_path)
-    try:
-        report_path.parent.mkdir(parents=True, exist_ok=True)
-        with report_path.open("w", newline="", encoding="utf-8") as csv_file:
-            writer = csv.writer(csv_file)
-            writer.writerow(["cloud_id", "status", "networkId"])
-            for cloud_id in cloud_ids:
-                status = "exists" if cloud_id in inventory_serials else "missing"
-                network_id = network_ids_by_serial.get(cloud_id, "NONE")
-                writer.writerow([cloud_id, status, network_id])
-    except OSError as exc:
-        log_error(f"Failed writing check report CSV at {report_path}: {exc}")
-        return False, f"failed to write report CSV: {exc}"
-
-    log_info(f"Check report CSV written: path={report_path}, rows={len(cloud_ids)}")
-    return True, f"report written to {report_path}"
 
 
 def check_cloud_ids_in_inventory(
