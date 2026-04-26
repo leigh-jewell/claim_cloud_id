@@ -34,7 +34,10 @@ def get_batch_size(cli_batch_size: int | None) -> int:
                 raise ValueError("MERAKI_BATCH_SIZE must be a positive integer") from exc
         else:
             user_value = input(f"Enter batch size [default {DEFAULT_BATCH_SIZE}]: ").strip()
-            batch_size = DEFAULT_BATCH_SIZE if not user_value else int(user_value)
+            try:
+                batch_size = DEFAULT_BATCH_SIZE if not user_value else int(user_value)
+            except ValueError:
+                raise ValueError(f"Batch size must be a positive integer, got: {user_value!r}") from None
 
     if batch_size < 1:
         raise ValueError("Batch size must be greater than 0")

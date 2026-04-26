@@ -54,7 +54,6 @@ def check_cloud_ids_in_inventory(
     if not report_success:
         return False, report_message
 
-    emit_info(f"[OK] {report_message}")
     return True, "inventory check completed"
 
 

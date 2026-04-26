@@ -246,12 +246,10 @@ def get_inventory_serials_for_cloud_ids(
     if not success:
         return False, message, None
 
-    found_serials: set[str] = set()
     batch_serials = {
         device.get("serial")
         for device in inventory_devices or []
         if isinstance(device, dict) and device.get("serial")
     }
-    found_serials.update(batch_serials)
 
-    return True, message, found_serials
+    return True, message, batch_serials
