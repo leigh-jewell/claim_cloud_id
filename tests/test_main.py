@@ -75,6 +75,7 @@ class TestMainBootstrap(unittest.TestCase):
             report_csv="inventory_check_report.csv",
             org_id="123",
             log_file=None,
+            dry_run=False,
         )
         dashboard = object()
 
@@ -101,6 +102,7 @@ class TestMainBootstrap(unittest.TestCase):
             ["A", "B"],
             50,
             "inventory_check_report.csv",
+            dry_run=False,
         )
 
     def test_release_action_delegates_with_no_report_path(self):
@@ -111,6 +113,7 @@ class TestMainBootstrap(unittest.TestCase):
             report_csv="inventory_check_report.csv",
             org_id="123",
             log_file=None,
+            dry_run=False,
         )
         dashboard = object()
 
@@ -138,6 +141,7 @@ class TestMainBootstrap(unittest.TestCase):
             ["A", "B"],
             50,
             None,
+            dry_run=False,
         )
 
     def test_claim_action_delegates_with_no_report_path(self):
@@ -148,6 +152,7 @@ class TestMainBootstrap(unittest.TestCase):
             report_csv="inventory_check_report.csv",
             org_id="123",
             log_file=None,
+            dry_run=False,
         )
         dashboard = object()
 
@@ -175,6 +180,7 @@ class TestMainBootstrap(unittest.TestCase):
             ["A", "B"],
             50,
             None,
+            dry_run=False,
         )
 
 

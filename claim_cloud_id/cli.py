@@ -80,4 +80,10 @@ def parse_args() -> argparse.Namespace:
         "--log-file",
         help="Path to run log file (or set MERAKI_LOG_FILE)",
     )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        default=False,
+        help="Preview which devices would be acted on without making any inventory changes",
+    )
     return parser.parse_args()

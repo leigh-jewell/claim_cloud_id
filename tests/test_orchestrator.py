@@ -194,6 +194,109 @@ class TestRunInventoryWorkflow(unittest.TestCase):
         self.assertFalse(success)
         self.assertEqual(message, "inventory verification failed after claim")
 
+    # ── dry-run ───────────────────────────────────────────────────────────────
+
+    @patch("claim_cloud_id.orchestrator.emit_info")
+    def test_dry_run_check_skips_api_call(self, mock_emit):
+        success, message = run_inventory_workflow(
+            self.dashboard,
+            self.org_id,
+            "check",
+            self.cloud_ids,
+            self.batch_size,
+            report_csv_path="report.csv",
+            dry_run=True,
+        )
+
+        self.assertTrue(success)
+        self.assertIn("dry run", message)
+        mock_emit.assert_called()
+
+    @patch("claim_cloud_id.orchestrator.emit_info")
+    @patch(
+        "claim_cloud_id.orchestrator.get_inventory_serials_for_cloud_ids",
+        return_value=(True, "ok", {"A"}),
+    )
+    def test_dry_run_claim_prints_preview_and_skips_execute(self, _mock_inventory, mock_emit):
+        success, message = run_inventory_workflow(
+            self.dashboard,
+            self.org_id,
+            "claim",
+            self.cloud_ids,
+            self.batch_size,
+            dry_run=True,
+        )
+
+        self.assertTrue(success)
+        self.assertIn("dry run", message)
+        self.assertIn("claim", message)
+        # "B" is the only claimable ID ("A" is already in inventory)
+        printed = [call.args[0] for call in mock_emit.call_args_list]
+        self.assertTrue(any("B" in s for s in printed))
+
+    @patch("claim_cloud_id.orchestrator.emit_info")
+    @patch(
+        "claim_cloud_id.orchestrator.get_network_bound_cloud_ids",
+        return_value=(True, "checked", []),
+    )
+    @patch(
+        "claim_cloud_id.orchestrator.get_inventory_serials_for_cloud_ids",
+        return_value=(True, "ok", {"A", "B"}),
+    )
+    def test_dry_run_release_prints_preview_and_skips_execute(self, _mock_inventory, _mock_bound, mock_emit):
+        success, message = run_inventory_workflow(
+            self.dashboard,
+            self.org_id,
+            "release",
+            self.cloud_ids,
+            self.batch_size,
+            dry_run=True,
+        )
+
+        self.assertTrue(success)
+        self.assertIn("dry run", message)
+        self.assertIn("release", message)
+
+    @patch(
+        "claim_cloud_id.orchestrator.get_inventory_serials_for_cloud_ids",
+        return_value=(True, "ok", {"A", "B"}),
+    )
+    def test_dry_run_claim_all_already_in_inventory_returns_no_claimable(self, _mock_inventory):
+        """When all IDs are already in inventory there's nothing to claim even in dry-run."""
+        success, message = run_inventory_workflow(
+            self.dashboard,
+            self.org_id,
+            "claim",
+            self.cloud_ids,
+            self.batch_size,
+            dry_run=True,
+        )
+
+        self.assertTrue(success)
+        self.assertEqual(message, "no claimable cloud IDs")
+
+    @patch(
+        "claim_cloud_id.orchestrator.get_network_bound_cloud_ids",
+        return_value=(True, "checked", ["A"]),
+    )
+    @patch(
+        "claim_cloud_id.orchestrator.get_inventory_serials_for_cloud_ids",
+        return_value=(True, "ok", {"A", "B"}),
+    )
+    def test_dry_run_release_blocked_by_network_still_fails(self, _mock_inventory, _mock_bound):
+        """Network-bound check still runs and blocks release even in dry-run."""
+        success, message = run_inventory_workflow(
+            self.dashboard,
+            self.org_id,
+            "release",
+            self.cloud_ids,
+            self.batch_size,
+            dry_run=True,
+        )
+
+        self.assertFalse(success)
+        self.assertEqual(message, "release blocked due to network-bound devices")
+
 
 if __name__ == "__main__":
     unittest.main()

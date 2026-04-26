@@ -64,6 +64,8 @@ def main() -> None:
         )
 
         report_csv_path = get_report_csv_path(args.report_csv) if action == "check" else None
+        if args.dry_run:
+            emit_info("[DRY RUN] Previewing action — no inventory changes will be made.")
         success, message = run_inventory_workflow(
             dashboard,
             org_id,
@@ -71,6 +73,7 @@ def main() -> None:
             cloud_ids,
             requested_batch_size,
             report_csv_path,
+            dry_run=args.dry_run,
         )
         if not success:
             emit_error(f"[ERROR] {message}")

@@ -121,5 +121,23 @@ class TestGetBatchSize(unittest.TestCase):
         self.assertEqual(result, DEFAULT_BATCH_SIZE)
 
 
+# ── parse_args dry-run ────────────────────────────────────────────────────────
+
+class TestParseArgsDryRun(unittest.TestCase):
+    def test_dry_run_flag_defaults_to_false(self):
+        from claim_cloud_id.cli import parse_args
+        import sys
+        with patch.object(sys, "argv", ["claim-cloud-id", "--action", "claim", "--csv", "f.csv"]):
+            args = parse_args()
+        self.assertFalse(args.dry_run)
+
+    def test_dry_run_flag_set_when_passed(self):
+        from claim_cloud_id.cli import parse_args
+        import sys
+        with patch.object(sys, "argv", ["claim-cloud-id", "--dry-run", "--action", "claim", "--csv", "f.csv"]):
+            args = parse_args()
+        self.assertTrue(args.dry_run)
+
+
 if __name__ == "__main__":
     unittest.main()

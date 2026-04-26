@@ -243,8 +243,12 @@ def run_inventory_workflow(
     cloud_ids: list[str],
     requested_batch_size: int,
     report_csv_path: str | None = None,
+    dry_run: bool = False,
 ) -> tuple[bool, str]:
     if action == "check":
+        if dry_run:
+            emit_info("[DRY RUN] Would run inventory check — no API changes made.")
+            return True, "dry run: check action skipped"
         return handle_check_action(
             dashboard,
             org_id,
@@ -264,6 +268,11 @@ def run_inventory_workflow(
             return False, message
         if not action_cloud_ids:
             return True, message
+        if dry_run:
+            emit_info(f"[DRY RUN] Would claim {len(action_cloud_ids)} device(s) — no changes made.")
+            for cloud_id in action_cloud_ids:
+                emit_info(f"- {cloud_id}")
+            return True, f"dry run: would claim {len(action_cloud_ids)} device(s)"
         return execute_and_verify_action(
             dashboard,
             org_id,
@@ -283,6 +292,11 @@ def run_inventory_workflow(
             return False, message
         if not action_cloud_ids:
             return True, message
+        if dry_run:
+            emit_info(f"[DRY RUN] Would release {len(action_cloud_ids)} device(s) — no changes made.")
+            for cloud_id in action_cloud_ids:
+                emit_info(f"- {cloud_id}")
+            return True, f"dry run: would release {len(action_cloud_ids)} device(s)"
         return execute_and_verify_action(
             dashboard,
             org_id,

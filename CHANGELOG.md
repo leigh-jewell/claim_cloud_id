@@ -9,7 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Dry-run mode (`--dry-run`) to preview actions without making API calls
+- Dry-run mode (`--dry-run`) to preview which devices would be claimed/released without making any inventory changes; prepare and safety checks (e.g. network-binding) still run so output is accurate
+- `claim-cloud-id` console script entry point — users can now run `claim-cloud-id --action claim --csv devices.csv` directly instead of `python main.py`
+- Test coverage for `csv_loader` (header detection, deduplication, multi-column CSVs, empty row skipping), `api_operations` (batch loop, backoff logic, serial extraction), `report_writer` (happy path and `OSError`), and `cli` (`get_batch_size` validation, `get_action` invalid input, `--dry-run` flag)
+
+### Changed
+- Moved entry-point logic from top-level `main.py` into `claim_cloud_id/main.py`; added `claim_cloud_id/__main__.py` so `python -m claim_cloud_id` still works
+- Updated `README.md` and `QUICKSTART.md` to use the `claim-cloud-id` command throughout
 
 ---
 
