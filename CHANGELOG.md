@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## [Unreleased]
+
+---
+## [1.1.1] - 2026-04-26
 ### Security
 - Sanitize CSV cells in the inventory check report against spreadsheet formula injection (CWE-1236) by prefixing values starting with `=`, `+`, `-`, `@`, `\t`, or `\r` with a single quote
 - Log only response keys (not full response payloads) when the Meraki SDK returns an unexpected shape, to avoid writing server-controlled data verbatim into log files (CWE-532)
@@ -62,7 +65,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/leigh-jewell/claim_cloud_id/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/leigh-jewell/claim_cloud_id/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/leigh-jewell/claim_cloud_id/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/leigh-jewell/claim_cloud_id/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/leigh-jewell/claim_cloud_id/compare/v0.1.0...v1.0.0
 [0.1.0]: https://github.com/leigh-jewell/claim_cloud_id/releases/tag/v0.1.0
