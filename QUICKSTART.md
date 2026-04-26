@@ -30,17 +30,17 @@ Q2XX-XXXX-XXXZ
 **4. Run:**
 ```bash
 # Check which devices exist in inventory
-uv run python main.py --action check --csv devices.csv
+claim-cloud-id --action check --csv devices.csv
 
 # Claim devices into inventory
-uv run python main.py --action claim --csv devices.csv
+claim-cloud-id --action claim --csv devices.csv
 
 # Release devices from inventory
-uv run python main.py --action release --csv devices.csv
+claim-cloud-id --action release --csv devices.csv
 ```
 **4. Example Run:**
 ```console
-$uv run python main.py --action claim   --csv cloud_id.csv
+$ claim-cloud-id --action claim --csv cloud_id.csv
 Logging to meraki_inventory_actions.log
 Info: CSV header missing. Treating all rows as data.
 Loaded 2 cloud IDs from cloud_id.csv for claim with requested batch size 50

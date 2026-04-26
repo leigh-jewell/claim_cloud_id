@@ -47,7 +47,7 @@
 
 Claiming a list of devices into Meraki Dashboard from a CSV file using interactive option:
 ```console
-$ python main.py      
+$ claim-cloud-id
 Logging to meraki_inventory_actions.log
 Choose action [claim/release/check]: claim
 Enter path to CSV file with cloud IDs: cloud_id.csv
@@ -79,7 +79,7 @@ cd claim_cloud_id
 ```console
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
-pip install .                    # Users only
+pip install .                    # installs the claim-cloud-id command
 ```
 Or if using [UV](https://docs.astral.sh/uv/ "Python package and project manager"):
 ```console
@@ -118,17 +118,17 @@ MERAKI_LOG_FILE=meraki_inventory_actions.log
 
 Run with command options:
 ```bash
-uv run python main.py --action claim   --csv devices.csv
+claim-cloud-id --action claim --csv devices.csv
 ```
 Run interactive:
 ```bash
-uv run python main.py
+claim-cloud-id
 ```
 
-Run without [UV](https://docs.astral.sh/uv/):
+Run without [UV](https://docs.astral.sh/uv/) (activate the venv first):
 ```bash
 source .venv/bin/activate
-python main.py
+claim-cloud-id --action claim --csv devices.csv
 ```
 
 
@@ -142,9 +142,9 @@ against your [Meraki Dashboard](https://dashboard.meraki.com) organisation inven
 Run with `--action` and `--csv` as the minimum required arguments:
 
 ```bash
-uv run python main.py --action claim   --csv devices.csv
-uv run python main.py --action release --csv devices.csv
-uv run python main.py --action check   --csv devices.csv
+claim-cloud-id --action claim   --csv devices.csv
+claim-cloud-id --action release --csv devices.csv
+claim-cloud-id --action check   --csv devices.csv
 ```
 
 ---
@@ -209,16 +209,16 @@ retries, backoff events, and errors. Set the path via `--log-file` or `MERAKI_LO
 
 ```bash
 # Claim with explicit org ID and batch size
-uv run python main.py --action claim --csv devices.csv --org-id 123456 --batch-size 200
+claim-cloud-id --action claim --csv devices.csv --org-id 123456 --batch-size 200
 
 # Release using org ID from .env
-uv run python main.py --action release --csv devices.csv
+claim-cloud-id --action release --csv devices.csv
 
 # Check inventory and export a report
-uv run python main.py --action check --csv devices.csv --report-csv report.csv
+claim-cloud-id --action check --csv devices.csv --report-csv report.csv
 
 # Log output to a file
-uv run python main.py --action claim --csv devices.csv --log-file run_audit.log
+claim-cloud-id --action claim --csv devices.csv --log-file run_audit.log
 ```
 
 ---

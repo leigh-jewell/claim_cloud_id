@@ -8,3 +8,6 @@ dependencies = [
     "meraki>=2.2.0",
     "python-dotenv>=1.1.0",
 ]
+
+[project.scripts]
+claim-cloud-id = "claim_cloud_id.main:main"

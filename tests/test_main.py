@@ -2,7 +2,7 @@ from types import SimpleNamespace
 from unittest.mock import patch
 import unittest
 
-import main as app_main
+import claim_cloud_id.main as app_main
 
 
 class TestMainBootstrap(unittest.TestCase):
@@ -17,22 +17,22 @@ class TestMainBootstrap(unittest.TestCase):
         )
 
         with (
-            patch("main.parse_args", return_value=args),
-            patch("main.get_log_file_path", return_value="meraki_inventory_actions.log"),
-            patch("main.setup_file_logger", return_value="meraki_inventory_actions.log"),
-            patch("main.get_dashboard_api_key", return_value="api-key"),
-            patch("main.get_dashboard_client", return_value=object()),
-            patch("main.get_org_id", return_value=""),
+            patch("claim_cloud_id.main.parse_args", return_value=args),
+            patch("claim_cloud_id.main.get_log_file_path", return_value="meraki_inventory_actions.log"),
+            patch("claim_cloud_id.main.setup_file_logger", return_value="meraki_inventory_actions.log"),
+            patch("claim_cloud_id.main.get_dashboard_api_key", return_value="api-key"),
+            patch("claim_cloud_id.main.get_dashboard_client", return_value=object()),
+            patch("claim_cloud_id.main.get_org_id", return_value=""),
             patch(
-                "main.list_accessible_orgs",
+                "claim_cloud_id.main.list_accessible_orgs",
                 return_value=(
                     True,
                     "found 2 organization(s)",
                     [{"name": "Org A", "id": "111"}, {"name": "Org B", "id": "222"}],
                 ),
             ),
-            patch("main.emit_info") as mock_emit_info,
-            patch("main.emit_error") as _mock_emit_error,
+            patch("claim_cloud_id.main.emit_info") as mock_emit_info,
+            patch("claim_cloud_id.main.emit_error") as _mock_emit_error,
         ):
             with self.assertRaises(SystemExit) as exc:
                 app_main.main()
@@ -52,14 +52,14 @@ class TestMainBootstrap(unittest.TestCase):
         )
 
         with (
-            patch("main.parse_args", return_value=args),
-            patch("main.get_log_file_path", return_value="meraki_inventory_actions.log"),
-            patch("main.setup_file_logger", return_value="meraki_inventory_actions.log"),
-            patch("main.get_dashboard_api_key", return_value="api-key"),
-            patch("main.get_dashboard_client", return_value=object()),
-            patch("main.get_org_id", return_value=""),
-            patch("main.list_accessible_orgs", return_value=(False, "Meraki API error 403", None)),
-            patch("main.emit_error") as mock_emit_error,
+            patch("claim_cloud_id.main.parse_args", return_value=args),
+            patch("claim_cloud_id.main.get_log_file_path", return_value="meraki_inventory_actions.log"),
+            patch("claim_cloud_id.main.setup_file_logger", return_value="meraki_inventory_actions.log"),
+            patch("claim_cloud_id.main.get_dashboard_api_key", return_value="api-key"),
+            patch("claim_cloud_id.main.get_dashboard_client", return_value=object()),
+            patch("claim_cloud_id.main.get_org_id", return_value=""),
+            patch("claim_cloud_id.main.list_accessible_orgs", return_value=(False, "Meraki API error 403", None)),
+            patch("claim_cloud_id.main.emit_error") as mock_emit_error,
         ):
             with self.assertRaises(SystemExit) as exc:
                 app_main.main()
@@ -79,18 +79,18 @@ class TestMainBootstrap(unittest.TestCase):
         dashboard = object()
 
         with (
-            patch("main.parse_args", return_value=args),
-            patch("main.get_log_file_path", return_value="meraki_inventory_actions.log"),
-            patch("main.setup_file_logger", return_value="meraki_inventory_actions.log"),
-            patch("main.get_dashboard_api_key", return_value="api-key"),
-            patch("main.get_dashboard_client", return_value=dashboard),
-            patch("main.get_org_id", return_value="123"),
-            patch("main.get_action", return_value="check"),
-            patch("main.get_batch_size", return_value=50),
-            patch("main.load_cloud_ids_from_csv", return_value=["A", "B"]),
-            patch("main.get_report_csv_path", return_value="inventory_check_report.csv"),
-            patch("main.run_inventory_workflow", return_value=(True, "inventory check completed")) as mock_run,
-            patch("main.emit_info") as _mock_emit_info,
+            patch("claim_cloud_id.main.parse_args", return_value=args),
+            patch("claim_cloud_id.main.get_log_file_path", return_value="meraki_inventory_actions.log"),
+            patch("claim_cloud_id.main.setup_file_logger", return_value="meraki_inventory_actions.log"),
+            patch("claim_cloud_id.main.get_dashboard_api_key", return_value="api-key"),
+            patch("claim_cloud_id.main.get_dashboard_client", return_value=dashboard),
+            patch("claim_cloud_id.main.get_org_id", return_value="123"),
+            patch("claim_cloud_id.main.get_action", return_value="check"),
+            patch("claim_cloud_id.main.get_batch_size", return_value=50),
+            patch("claim_cloud_id.main.load_cloud_ids_from_csv", return_value=["A", "B"]),
+            patch("claim_cloud_id.main.get_report_csv_path", return_value="inventory_check_report.csv"),
+            patch("claim_cloud_id.main.run_inventory_workflow", return_value=(True, "inventory check completed")) as mock_run,
+            patch("claim_cloud_id.main.emit_info") as _mock_emit_info,
         ):
             app_main.main()
 
@@ -115,18 +115,18 @@ class TestMainBootstrap(unittest.TestCase):
         dashboard = object()
 
         with (
-            patch("main.parse_args", return_value=args),
-            patch("main.get_log_file_path", return_value="meraki_inventory_actions.log"),
-            patch("main.setup_file_logger", return_value="meraki_inventory_actions.log"),
-            patch("main.get_dashboard_api_key", return_value="api-key"),
-            patch("main.get_dashboard_client", return_value=dashboard),
-            patch("main.get_org_id", return_value="123"),
-            patch("main.get_action", return_value="release"),
-            patch("main.get_batch_size", return_value=50),
-            patch("main.load_cloud_ids_from_csv", return_value=["A", "B"]),
-            patch("main.get_report_csv_path") as mock_get_report_path,
-            patch("main.run_inventory_workflow", return_value=(True, "inventory verification passed after release")) as mock_run,
-            patch("main.emit_info") as _mock_emit_info,
+            patch("claim_cloud_id.main.parse_args", return_value=args),
+            patch("claim_cloud_id.main.get_log_file_path", return_value="meraki_inventory_actions.log"),
+            patch("claim_cloud_id.main.setup_file_logger", return_value="meraki_inventory_actions.log"),
+            patch("claim_cloud_id.main.get_dashboard_api_key", return_value="api-key"),
+            patch("claim_cloud_id.main.get_dashboard_client", return_value=dashboard),
+            patch("claim_cloud_id.main.get_org_id", return_value="123"),
+            patch("claim_cloud_id.main.get_action", return_value="release"),
+            patch("claim_cloud_id.main.get_batch_size", return_value=50),
+            patch("claim_cloud_id.main.load_cloud_ids_from_csv", return_value=["A", "B"]),
+            patch("claim_cloud_id.main.get_report_csv_path") as mock_get_report_path,
+            patch("claim_cloud_id.main.run_inventory_workflow", return_value=(True, "inventory verification passed after release")) as mock_run,
+            patch("claim_cloud_id.main.emit_info") as _mock_emit_info,
         ):
             app_main.main()
 
@@ -152,18 +152,18 @@ class TestMainBootstrap(unittest.TestCase):
         dashboard = object()
 
         with (
-            patch("main.parse_args", return_value=args),
-            patch("main.get_log_file_path", return_value="meraki_inventory_actions.log"),
-            patch("main.setup_file_logger", return_value="meraki_inventory_actions.log"),
-            patch("main.get_dashboard_api_key", return_value="api-key"),
-            patch("main.get_dashboard_client", return_value=dashboard),
-            patch("main.get_org_id", return_value="123"),
-            patch("main.get_action", return_value="claim"),
-            patch("main.get_batch_size", return_value=50),
-            patch("main.load_cloud_ids_from_csv", return_value=["A", "B"]),
-            patch("main.get_report_csv_path") as mock_get_report_path,
-            patch("main.run_inventory_workflow", return_value=(True, "inventory verification passed after claim")) as mock_run,
-            patch("main.emit_info") as _mock_emit_info,
+            patch("claim_cloud_id.main.parse_args", return_value=args),
+            patch("claim_cloud_id.main.get_log_file_path", return_value="meraki_inventory_actions.log"),
+            patch("claim_cloud_id.main.setup_file_logger", return_value="meraki_inventory_actions.log"),
+            patch("claim_cloud_id.main.get_dashboard_api_key", return_value="api-key"),
+            patch("claim_cloud_id.main.get_dashboard_client", return_value=dashboard),
+            patch("claim_cloud_id.main.get_org_id", return_value="123"),
+            patch("claim_cloud_id.main.get_action", return_value="claim"),
+            patch("claim_cloud_id.main.get_batch_size", return_value=50),
+            patch("claim_cloud_id.main.load_cloud_ids_from_csv", return_value=["A", "B"]),
+            patch("claim_cloud_id.main.get_report_csv_path") as mock_get_report_path,
+            patch("claim_cloud_id.main.run_inventory_workflow", return_value=(True, "inventory verification passed after claim")) as mock_run,
+            patch("claim_cloud_id.main.emit_info") as _mock_emit_info,
         ):
             app_main.main()
 
