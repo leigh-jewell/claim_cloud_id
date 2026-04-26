@@ -169,6 +169,7 @@ claim-cloud-id --action check   --csv devices.csv
 | `--batch-size` | `MERAKI_BATCH_SIZE` or `50` | Devices per API request. Larger is faster but may cause errors |
 | `--log-file` | `MERAKI_LOG_FILE` | Path to log file e.g. `logs/run.log` |
 | `--report-csv` | `inventory_check_report.csv` | Output report path for `check` action |
+| `--dry-run` | `False` | Preview which devices would be acted on without making any inventory changes |
 
 ---
 
