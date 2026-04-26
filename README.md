@@ -64,7 +64,7 @@ Info: no claimable cloud IDs were found outside inventory.
 
 ### Prerequisites
 
-- [Python](https://python.org/) >= 3.x
+- [Python](https://python.org/) >= 3.12
 - API key from [Meraki Dashboard](https://dashboard.meraki.com)
 
 ### Installation
@@ -77,8 +77,6 @@ cd claim_cloud_id
 
 **2. Install dependencies:**
 ```console
-git clone https://github.com/username/repo.git
-cd repo
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install .                    # Users only
@@ -222,19 +220,6 @@ uv run python main.py --action check --csv devices.csv --report-csv report.csv
 # Log output to a file
 uv run python main.py --action claim --csv devices.csv --log-file run_audit.log
 ```
----
-
-## 🧪 Refactor Validation (Phase 1)
-
-If you are validating the first refactor phase (constants/config/CLI extraction), run:
-
-```bash
-uv run python -m py_compile main.py claim_cloud_id/constants.py claim_cloud_id/config.py claim_cloud_id/cli.py claim_cloud_id/logger.py claim_cloud_id/csv_loader.py claim_cloud_id/report_writer.py claim_cloud_id/api_operations.py claim_cloud_id/orchestrator.py
-uv run python main.py --action check --csv cloud_id.csv
-uv run python -m unittest discover -s tests -p "test_*.py"
-```
-
-These checks confirm the module extraction compiles and that the existing check workflow still runs.
 
 ---
 
