@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## [Unreleased]
+### Security
+- Sanitize CSV cells in the inventory check report against spreadsheet formula injection (CWE-1236) by prefixing values starting with `=`, `+`, `-`, `@`, `\t`, or `\r` with a single quote
+- Log only response keys (not full response payloads) when the Meraki SDK returns an unexpected shape, to avoid writing server-controlled data verbatim into log files (CWE-532)
+- Add upper version bounds (`<3` for `meraki`, `<2` for `python-dotenv`) in `pyproject.toml` to limit supply-chain exposure for `pip install .` users
+
 ### Changed
 - Added `--dry-run` to the CLI Options table in `README.md`
 

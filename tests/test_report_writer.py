@@ -70,6 +70,33 @@ class TestWriteInventoryCheckReport(unittest.TestCase):
         lines = self._read_lines()
         self.assertEqual(lines[1], "X,missing,NONE")
 
+    # ── CSV formula-injection sanitization (CWE-1236) ──────────────────────
+
+    def test_cloud_id_starting_with_equals_is_neutralized(self):
+        ok, _ = write_inventory_check_report(
+            self.report_path, ["=cmd|'/c calc'!A1"], set(), {}
+        )
+        self.assertTrue(ok)
+        lines = self._read_lines()
+        # csv.writer quotes the cell because the leading "'" + "=" makes it a special value
+        self.assertTrue(lines[1].startswith("'="), f"Expected leading apostrophe-equals, got: {lines[1]!r}")
+
+    def test_network_id_starting_with_at_is_neutralized(self):
+        ok, _ = write_inventory_check_report(
+            self.report_path, ["X"], {"X"}, {"X": "@SUM(1+1)"}
+        )
+        self.assertTrue(ok)
+        lines = self._read_lines()
+        self.assertIn("'@SUM(1+1)", lines[1])
+
+    def test_safe_values_are_unchanged(self):
+        ok, _ = write_inventory_check_report(
+            self.report_path, ["AAA-1111"], {"AAA-1111"}, {"AAA-1111": "net-abc"}
+        )
+        self.assertTrue(ok)
+        lines = self._read_lines()
+        self.assertEqual(lines[1], "AAA-1111,exists,net-abc")
+
     # ── OSError path ───────────────────────────────────────────────────────
 
     def test_os_error_returns_false(self):

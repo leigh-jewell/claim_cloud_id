@@ -4,6 +4,10 @@ from pathlib import Path
 from claim_cloud_id.logger import log_error, log_info
 
 
+def _safe_csv(value: str) -> str:
+    return f"'{value}" if value and value[0] in ("=", "+", "-", "@", "\t", "\r") else value
+
+
 def write_inventory_check_report(
     report_csv_path: str,
     cloud_ids: list[str],
@@ -19,7 +23,7 @@ def write_inventory_check_report(
             for cloud_id in cloud_ids:
                 status = "exists" if cloud_id in inventory_serials else "missing"
                 network_id = network_ids_by_serial.get(cloud_id, "NONE")
-                writer.writerow([cloud_id, status, network_id])
+                writer.writerow([_safe_csv(cloud_id), status, _safe_csv(network_id)])
     except OSError as exc:
         log_error(f"Failed writing check report CSV at {report_path}: {exc}")
         return False, f"failed to write report CSV: {exc}"

@@ -73,8 +73,11 @@ def run_inventory_action(
 
     claimed_serials = response.get("serials")
     if claimed_serials is None:
-        log_error(f"API call returned unexpected payload without serials: action={action}, payload={response}")
-        return False, f"SDK response missing 'serials': {response}", response
+        log_error(
+            f"API call returned unexpected payload without serials: action={action}, "
+            f"payload_keys={list(response.keys())}"
+        )
+        return False, f"SDK response missing 'serials' key (got keys: {list(response.keys())})", response
 
     if not isinstance(claimed_serials, list):
         log_error(f"API call returned non-list serials: action={action}, serials={claimed_serials}")
