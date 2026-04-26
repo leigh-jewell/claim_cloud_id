@@ -216,18 +216,26 @@ wheels = [
 
 [[package]]
 name = "claim-cloud-id"
-version = "0.1.0"
-source = { virtual = "." }
+version = "1.1.1"
+source = { editable = "." }
 dependencies = [
     { name = "meraki" },
     { name = "python-dotenv" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
+]
+
 [package.metadata]
 requires-dist = [
-    { name = "meraki", specifier = ">=2.2.0" },
-    { name = "python-dotenv", specifier = ">=1.1.0" },
+    { name = "meraki", specifier = ">=2.2.0,<3" },
+    { name = "python-dotenv", specifier = ">=1.1.0,<2" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pytest", specifier = ">=8.0" }]
 
 [[package]]
 name = "colorama"

@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## [Unreleased]
+### Fixed
+- CI: moved `test.yml` workflow from `tests/.github/workflows/` to `.github/workflows/` so GitHub Actions actually picks it up
+- CI: workflow now runs `pytest` instead of `unittest discover`, adds `workflow_dispatch` for manual runs, enables uv cache, and pins to `setup-uv@v4`
+
+### Changed
+- Added `pytest>=8.0` to a new `[dependency-groups].dev` section in `pyproject.toml`
+- Added `[build-system]` (hatchling) so `uv sync`/`uv run` install the project itself, making `claim_cloud_id` importable in the managed venv
 
 ---
 ## [1.1.1] - 2026-04-26

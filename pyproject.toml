@@ -11,3 +11,12 @@ dependencies = [
 
 [project.scripts]
 claim-cloud-id = "claim_cloud_id.main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+]
