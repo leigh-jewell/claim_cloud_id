@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## [Unreleased]
+
+---
+## [1.1.0] - 2026-04-26
 ### Added
 - Dry-run mode (`--dry-run`) to preview which devices would be claimed/released without making any inventory changes; prepare and safety checks (e.g. network-binding) still run so output is accurate
 - `claim-cloud-id` console script entry point — users can now run `claim-cloud-id --action claim --csv devices.csv` directly instead of `python main.py`
@@ -16,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Moved entry-point logic from top-level `main.py` into `claim_cloud_id/main.py`; added `claim_cloud_id/__main__.py` so `python -m claim_cloud_id` still works
 - Updated `README.md` and `QUICKSTART.md` to use the `claim-cloud-id` command throughout
+
+### Fixed
+- Interactive batch size prompt now raises a clear error on non-integer input instead of crashing
+- Removed redundant intermediate variable in `get_inventory_serials_for_cloud_ids`
+- Removed duplicate `[OK]` emit in `check_cloud_ids_in_inventory`
+- `pyproject.toml` description updated from placeholder text
 
 ---
 
@@ -46,6 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/leigh-jewell/claim_cloud_id/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/leigh-jewell/claim_cloud_id/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/leigh-jewell/claim_cloud_id/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/leigh-jewell/claim_cloud_id/compare/v0.1.0...v1.0.0
 [0.1.0]: https://github.com/leigh-jewell/claim_cloud_id/releases/tag/v0.1.0

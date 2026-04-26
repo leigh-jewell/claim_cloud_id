@@ -1,6 +1,6 @@
 [project]
 name = "claim-cloud-id"
-version = "0.1.0"
+version = "1.1.0"
 description = "A Python utility for interacting with the Meraki Dashboard API to automate device inventory tasks — bulk add, release and reporting."
 readme = "README.md"
 requires-python = ">=3.12"
